@@ -19,7 +19,7 @@ public:
 	void getUDLR(int playerRow, int playerCol, int UDLR[4]);
 	int maxComb(int UDLR[4]);
 	int countNeigh(int UDLR[4]);
-	int maxComb(int UDLR[4], int neigh);
+	int maxComb(int UDLR[4], int neigh, int playerRow, int playerCol);
 	~TwoDimension();
 };
 

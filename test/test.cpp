@@ -5,15 +5,16 @@
 using namespace std;
 typedef int* IntArrayPtr;
 
-TwoDimension::TwoDimension() {
+TwoDimension::TwoDimension()
+{
     int d1, d2;
-	cout << "Enter the row and column dimensions of the array:\n";
-	cin >> d1 >> d2;
-	row = d1;
-	col = d2;
-	Board = new IntArrayPtr[d1];
-	for (int i = 0; i < d1; i++)
-		Board[i] = new int[d2];
+    cout << "Enter the row and column dimensions of the array:\n";
+    cin >> d1 >> d2;
+    row = d1;
+    col = d2;
+    Board = new IntArrayPtr[d1];
+    for (int i = 0; i < d1; i++)
+        Board[i] = new int[d2];
 }
 
 void TwoDimension::play()
@@ -36,13 +37,15 @@ void TwoDimension::play()
     checkWinner();
 }
 
-void TwoDimension::fillArray() {
+void TwoDimension::fillArray()
+{
     for (int i = 0; i < row; i++)
         for (int j = 0; j < col; j++)
             Board[i][j] = 0;
 }
 
-void TwoDimension::printArray() {
+void TwoDimension::printArray()
+{
     int displayRow = 1;
     int displayCol = 1;
     cout << " ";
@@ -52,7 +55,7 @@ void TwoDimension::printArray() {
         displayCol++;
     }
     cout << endl << endl;
-	for (int i = 0; i < row; i++)
+    for (int i = 0; i < row; i++)
     {
         cout << displayRow << setw(3);
         displayRow++;
@@ -80,13 +83,13 @@ bool TwoDimension::getMove(int playerSymbol)
     int neigh = countNeigh(UDLR);
     cout << endl << "you have this amount of neigh: " << neigh << endl;
     int total = maxComb(UDLR);
-    int total2 = maxComb(UDLR, neigh);
+    int total2 = maxComb(UDLR, neigh, playerRow, playerCol);
     if (total == 0)
         total = 1;
     else
         total = total;
 
-    Board[playerRow][playerCol] = playerSymbol * total;
+    Board[playerRow][playerCol] = playerSymbol * total2;
     printArray();
 
     bool done = isFull();
@@ -94,9 +97,8 @@ bool TwoDimension::getMove(int playerSymbol)
 
 }
 
-int TwoDimension::maxComb(int UDLR[4], int neigh)
+int TwoDimension::maxComb(int UDLR[4], int neigh, int playerRow, int playerCol)
 {
-    int up =
     if (neigh == 0 || neigh == 1)
     {
         return 1;
@@ -105,29 +107,65 @@ int TwoDimension::maxComb(int UDLR[4], int neigh)
     {
         int direc1 = 0;
         int direc2 = 0;
-        int tempTot = 0
-        int total = 0;
+        int tempTot = 0;
+        int total = 1;
         for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < 4; j++)
             {
-                tempTot = UDLR[i] + UDLR[j];
-                if (tempTot <=6 && tempTot > total)
+                if (i == j)
                 {
-                    direc1 = i;
-                    direc2 = j;
-                    total = tempTotal;
+                    continue;
                 }
+                else
+                {
+                    tempTot = std::abs(UDLR[i]) + std::abs(UDLR[j]);
+                    if (tempTot <=6 && tempTot > total)
+                    {
+                        direc1 = i;
+                        direc2 = j;
+                        total = tempTot;
+                    }
+                }
+            }
+            switch(direc1)
+            {
+            case 0:
+                Board[playerRow-1][playerCol] = 0;
+                break;
+            case 1:
+                Board[playerRow+1][playerCol] = 0;
+                break;
+            case 2:
+                Board[playerRow][playerCol-1] = 0;
+                break;
+            case 3:
+                Board[playerRow-1][playerCol+1] = 0;
+                break;
+            }
+            switch(direc2)
+            {
+            case 0:
+                Board[playerRow-1][playerCol] = 0;
+                break;
+            case 1:
+                Board[playerRow+1][playerCol] = 0;
+                break;
+            case 2:
+                Board[playerRow][playerCol-1] = 0;
+                break;
+            case 3:
+                Board[playerRow-1][playerCol+1] = 0;
+                break;
             }
             return total;
         }
-        loop here get max value <=6,
-        else recursion
+        return maxComb(UDLR, 1, playerRow, playerCol);
     }
-    /*
+
     if (neigh == 3)
     {
-
+        return 300;
     }
     if (neigh == 4)
     {
@@ -138,10 +176,10 @@ int TwoDimension::maxComb(int UDLR[4], int neigh)
         }
         else
         {
-            maxComb(UDLR, 3);
+            maxComb(UDLR, 3, playerRow, playerCol);
         }
     }
-    */
+
 }
 
 int TwoDimension::countNeigh(int UDLR[4])
@@ -214,7 +252,7 @@ bool TwoDimension::isFull()
 bool TwoDimension::isValidMove(int playerRow, int playerCol) const
 {
     if (0 <= playerRow && playerRow <= row-1 && 0 <= playerCol && playerCol <= col-1
-        && Board[playerRow][playerCol] == 0)
+            && Board[playerRow][playerCol] == 0)
         return true;
     else
         return false;
@@ -248,8 +286,9 @@ void TwoDimension::checkWinner()
     }
 }
 
-TwoDimension::~TwoDimension() {
-	for (int i = 0; i < row; i++)
-		delete[] Board[i];
-	delete[] Board;
+TwoDimension::~TwoDimension()
+{
+    for (int i = 0; i < row; i++)
+        delete[] Board[i];
+    delete[] Board;
 }
