@@ -82,12 +82,12 @@ bool TwoDimension::getMove(int playerSymbol)
     getUDLR(playerRow, playerCol, UDLR);
     int neigh = countNeigh(UDLR);
     cout << endl << "you have this amount of neigh: " << neigh << endl;
-    int total = maxComb(UDLR);
+    cout << " before max comb is called";
     int total2 = maxComb(UDLR, neigh, playerRow, playerCol);
-    if (total == 0)
-        total = 1;
+    if (total2 == 0)
+        total2 = 1;
     else
-        total = total;
+        total2 = total2;
 
     Board[playerRow][playerCol] = playerSymbol * total2;
     printArray();
@@ -105,29 +105,209 @@ int TwoDimension::maxComb(int UDLR[4], int neigh, int playerRow, int playerCol)
     }
     if (neigh == 2)
     {
-        int direc1 = 0;
-        int direc2 = 0;
+        int direc1 = 5;
+        int direc2 = 5;
         int tempTot = 0;
-        int total = 1;
+        int total = 0;
         for (int i = 0; i < 4; i++)
         {
+            if (UDLR[i] == 0)
+                {
+                    // skips element in UDLR is 0, i.e. empty
+                    continue;
+                }
             for (int j = 0; j < 4; j++)
             {
                 if (i == j)
                 {
+                    // Prevents algorithm from using itself as a pair
                     continue;
                 }
-                else
+                if (UDLR[j] == 0)
                 {
-                    tempTot = std::abs(UDLR[i]) + std::abs(UDLR[j]);
-                    if (tempTot <=6 && tempTot > total)
-                    {
-                        direc1 = i;
-                        direc2 = j;
-                        total = tempTot;
-                    }
+                    // skips element in UDLR is 0, i.e. empty
+                    continue;
                 }
+                /*
+                if (std::abs(UDLR[i]) == 6 || std::abs(UDLR[j]) == 6)
+                {
+                    cout << "before continue";
+                    continue;
+                    cout << "after continue";
+                }
+                */
+
+                 //   if (UDLR[i] != 0 || UDLR[j] != 0)
+                 //   {
+                        tempTot = std::abs(UDLR[i]) + std::abs(UDLR[j]);
+                        if (tempTot <=6 && tempTot > total)
+                        {
+                            direc1 = i;
+                            direc2 = j;
+                            total = tempTot;
+                   //     }
+                    }
+
             }
+        }
+
+        cout << endl << "Value of i and j " << direc1 << ", " << direc2 << endl;
+        if (total == 0)
+        {
+            cout << "recuse to one\n";
+            return maxComb(UDLR, 1, playerRow, playerCol);
+        }
+        switch(direc1)
+        {
+        case 0:
+            Board[playerRow-1][playerCol] = 0;
+            break;
+        case 1:
+            Board[playerRow+1][playerCol] = 0;
+            break;
+        case 2:
+            Board[playerRow][playerCol-1] = 0;
+            break;
+        case 3:
+            Board[playerRow-1][playerCol+1] = 0;
+            break;
+        }
+        switch(direc2)
+        {
+        case 0:
+            Board[playerRow-1][playerCol] = 0;
+            break;
+        case 1:
+            Board[playerRow+1][playerCol] = 0;
+            break;
+        case 2:
+            Board[playerRow][playerCol-1] = 0;
+            break;
+        case 3:
+            Board[playerRow][playerCol+1] = 0;
+            break;
+        }
+
+        return total;
+    }
+
+
+    if (neigh == 3)
+    {
+        int tempTot = 0;
+        int total = 0;
+        int direc1 = 5;
+        int direc2 = 5;
+        int direc3 = 5;
+
+        cout << "beginning of call";
+        // 4 combinations, change parameter so that boundaries are not passed, will crash
+        if (std::abs(UDLR[0]) + std::abs(UDLR[1]) + std::abs(UDLR[2]) > total && std::abs(UDLR[0]) + std::abs(UDLR[1]) + std::abs(UDLR[2]) <= 6)
+        {
+            direc1 = 0;
+            direc2 = 1;
+            direc3 = 2;
+            total = std::abs(UDLR[0]) + std::abs(UDLR[1]) + std::abs(UDLR[2]);
+        }
+        if (std::abs(UDLR[0]) + std::abs(UDLR[1]) + std::abs(UDLR[3]) > total && std::abs(UDLR[0]) + std::abs(UDLR[1]) + std::abs(UDLR[3]) <= 6)
+        {
+            direc1 = 0;
+            direc2 = 1;
+            direc3 = 3;
+            total = std::abs(UDLR[0]) + std::abs(UDLR[1]) + std::abs(UDLR[3]);
+        }
+        if (std::abs(UDLR[1]) + std::abs(UDLR[2]) + std::abs(UDLR[3]) > total && std::abs(UDLR[1]) + std::abs(UDLR[2]) + std::abs(UDLR[3]) <= 6)
+        {
+            direc1 = 1;
+            direc2 = 2;
+            direc3 = 3;
+            total = std::abs(UDLR[1]) + std::abs(UDLR[2]) + std::abs(UDLR[3]);
+        }
+        if (std::abs(UDLR[2]) + std::abs(UDLR[3]) + std::abs(UDLR[0]) > total && std::abs(UDLR[2]) + std::abs(UDLR[3]) + std::abs(UDLR[0]) <= 6)
+        {
+            direc1 = 2;
+            direc2 = 3;
+            direc3 = 0;
+            total = std::abs(UDLR[2]) + std::abs(UDLR[3]) + std::abs(UDLR[0]);
+        }
+        cout << "will this fix it?";
+        if (playerCol == 0)
+        {
+            if ((std::abs(UDLR[0]) + std::abs(UDLR[1]) + std::abs(UDLR[3]) > total) && std::abs(UDLR[0]) + std::abs(UDLR[1]) + std::abs(UDLR[3]) <= 6)
+            {
+                total = std::abs(UDLR[0]) + std::abs(UDLR[1]) + std::abs(UDLR[3]);
+                direc1 = 0;
+                direc2 = 1;
+                direc3 = 3;
+            }
+            if (std::abs(UDLR[0]) + std::abs(UDLR[1]) + std::abs(UDLR[3]) > 6)
+            {
+                return maxComb(UDLR, 2, playerRow, playerCol);
+            }
+        }
+
+        if (playerCol == col-1)
+        {
+            direc1 = 0;
+            direc2 = 1;
+            direc3 = 2;
+            if ((std::abs(UDLR[0]) + std::abs(UDLR[1]) + std::abs(UDLR[2]) > total) && std::abs(UDLR[0]) + std::abs(UDLR[1]) + std::abs(UDLR[2]) <= 6)
+            {
+                total = std::abs(UDLR[0]) + std::abs(UDLR[1]) + std::abs(UDLR[2]);
+                direc1 = 0;
+                direc2 = 1;
+                direc3 = 2;
+            }
+            if (std::abs(UDLR[0]) + std::abs(UDLR[1]) + std::abs(UDLR[2]) > 6)
+            {
+                return maxComb(UDLR, 2, playerRow, playerCol);
+            }
+        }
+
+        if (playerRow == 0)
+        {
+
+            cout << "HEREEEE!\n\n\n";
+            if ((std::abs(UDLR[1]) + std::abs(UDLR[2]) + std::abs(UDLR[3]) > total) && std::abs(UDLR[1]) + std::abs(UDLR[2]) + std::abs(UDLR[3]) <= 6)
+            {
+                total = std::abs(UDLR[1]) + std::abs(UDLR[2]) + std::abs(UDLR[3]);
+                direc1 = 1;
+                direc2 = 2;
+                direc3 = 3;
+                cout << "it is running!!!";
+            }
+            if (std::abs(UDLR[1]) + std::abs(UDLR[2]) + std::abs(UDLR[3]) > 6)
+            {
+                cout << "\n\n\n !!!recursion to two\n\n\n";
+                return maxComb(UDLR, 2, playerRow, playerCol);
+            }
+        }
+
+        if (playerRow == row-1)
+        {
+            if ((std::abs(UDLR[0]) + std::abs(UDLR[2]) + std::abs(UDLR[3]) > total) && std::abs(UDLR[0]) + std::abs(UDLR[2]) + std::abs(UDLR[3]) <= 6)
+            {
+                total = std::abs(UDLR[0]) + std::abs(UDLR[2]) + std::abs(UDLR[3]);
+                direc1 = 0;
+                direc2 = 2;
+                direc3 = 3;
+            }
+            if (std::abs(UDLR[0]) + std::abs(UDLR[2]) + std::abs(UDLR[3]) > 6)
+            {
+                cout << "\n\n\n !!!recursion to two\n\n\n";
+                return maxComb(UDLR, 2, playerRow, playerCol);
+            }
+        }
+
+        if (total == 0)
+        {
+            cout << "recuse two neighbours if sum too high\n";
+            return maxComb(UDLR, 2, playerRow, playerCol);
+        }
+        else
+        {
+
+            cout << "this values " << direc1 << " " << direc2 << " " << direc3;
             switch(direc1)
             {
             case 0:
@@ -155,27 +335,43 @@ int TwoDimension::maxComb(int UDLR[4], int neigh, int playerRow, int playerCol)
                 Board[playerRow][playerCol-1] = 0;
                 break;
             case 3:
-                Board[playerRow-1][playerCol+1] = 0;
+                Board[playerRow][playerCol+1] = 0;
                 break;
             }
+            switch(direc3)
+            {
+            case 0:
+                Board[playerRow-1][playerCol] = 0;
+                break;
+            case 1:
+                Board[playerRow+1][playerCol] = 0;
+                break;
+            case 2:
+                Board[playerRow][playerCol-1] = 0;
+                break;
+            case 3:
+                Board[playerRow][playerCol+1] = 0;
+                break;
+            }
+            cout << "before return";
             return total;
         }
-        return maxComb(UDLR, 1, playerRow, playerCol);
-    }
-
-    if (neigh == 3)
-    {
-        return 300;
     }
     if (neigh == 4)
     {
-        int total = UDLR[0] + UDLR[1] + UDLR[2] + UDLR[3];
+        int total = std::abs(UDLR[0]) + std::abs(UDLR[1]) + std::abs(UDLR[2]) + std::abs(UDLR[3]);
         if (total <= 6)
         {
+            cout << "doing 4 neighbours";
+            Board[playerRow-1][playerCol] = 0;
+            Board[playerRow+1][playerCol] = 0;
+            Board[playerRow][playerCol-1] = 0;
+            Board[playerRow][playerCol+1] = 0;
             return total;
         }
         else
         {
+            cout << "recurse to 3 neighbours";
             maxComb(UDLR, 3, playerRow, playerCol);
         }
     }
